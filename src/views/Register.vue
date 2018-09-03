@@ -1,0 +1,218 @@
+<template>
+  <div class="page">
+    <div class="register">
+      <Avatar :src="avatar" @click="filePickerOnClick"></Avatar>
+      <div class="register-form">
+        <div class="register-form-input-box" :class="{'error': username && !validUsername}" data-error="Invalid username!">
+          <input autocomplete="new-password" maxlength="12" class="register-form-input" type="text" placeholder="Name" v-model="username" @blur="presubmit">
+        </div>
+        <div class="register-form-input-box" :class="{'error': password && !validPassword}" data-error="Invalid password!">
+          <input autocomplete="new-password" maxlength="12" class="register-form-input" :class="{'error': errorPassword}" type="password" placeholder="Password" v-model="password">
+        </div>
+        <div class="register-form-input-box" v-if="!userExist" :class="{'error': inviteCode && !validInviteCode}" data-error="Invalid invite code!">
+          <input autocomplete="new-password" maxlength="4" class="register-form-input" :class="{'error': errorInviteCode}" type="text" placeholder="Invite code" v-model="inviteCode">
+        </div>
+        <div class="register-form-btn-box">
+          <o-button class="register-form-btn" v-if="userExist" :disabled="!allowLogin" type="success" @click="login">Login</o-button>
+          <o-button class="register-form-btn" v-if="!userExist" :disabled="!allowRegister" type="success" @click="register">Register</o-button>
+        </div>
+      </div>
+      <input type="file" capture="camera" ref="filePicker" accept="image/*" id="file-picker" hidden  @change="doChooseImg">
+    </div>
+  </div>
+</template>
+
+<script>
+/* eslint-disable no-console */
+
+import chooseImg from '@/utils/chooseImg'
+import { isUsername, isPassword, isInviteCode } from '@/utils/validator'
+import Button from '@/components/Button'
+import Avatar from '@/components/Avatar'
+
+export default {
+  data () {
+    return {
+      username: '',
+      password: '',
+      inviteCode: '',
+      userExist: true,
+      errorPassword: false,
+      errorInviteCode: false,
+      avatar: 'data:image/jpeg;base64,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'
+    }
+  },
+  computed: {
+    validUsername () {
+      return isUsername(this.username)
+    },
+    validPassword () {
+      return isPassword(this.password)
+    },
+    validInviteCode () {
+      return isInviteCode(this.inviteCode)
+    },
+    allowRegister () {
+      return this.validUsername && this.validPassword && this.validInviteCode
+    },
+    allowLogin () {
+      return this.validUsername && this.validPassword
+    }
+  },
+  methods: {
+    filePickerOnClick () {
+      this.$refs.filePicker.click()
+    },
+    doChooseImg (e) {
+      chooseImg(e, (dataUrl) => {
+        this.avatar = dataUrl
+      })
+    },
+    async presubmit () {
+      const result = await this.$store.dispatch('preSubmit', {
+        username: this.username
+      })
+      if (result.username) {
+        this.userExist = true
+        this.avatar = result.avatar
+      } else {
+        this.userExist = false
+      }
+    },
+    async login () {
+      const loginInfo = {
+        username: this.username,
+        password: this.password
+      }
+      const result = await this.$store.dispatch('doLogin', loginInfo)
+      if (!result.username) {
+        this.errorPassword = true
+        setTimeout(() => {
+          this.errorPassword = false
+        }, 1000)
+      } else {
+        sessionStorage && sessionStorage.setItem('oChatAvatar', result.avatar)
+        sessionStorage && sessionStorage.setItem('oChatUsername', this.username)
+        this.saveToken(result['access_token'], result['refresh_token'])
+        this.$router.replace('/chat')
+      }
+    },
+    async register () {
+      const registerInfo = {
+        username: this.username,
+        password: this.password,
+        inviteCode: this.inviteCode,
+        avatar: this.avatar
+      }
+      const result = await this.$store.dispatch('doRegistration', registerInfo)
+      if (result.message === 'Invite code error!') {
+        this.errorInviteCode = true
+        setTimeout(() => {
+          this.errorInviteCode = false
+        }, 1000)
+      } else {
+        sessionStorage && sessionStorage.setItem('oChatAvatar', result.avatar)
+        sessionStorage && sessionStorage.setItem('oChatUsername', this.username)
+        this.saveToken(result['access_token'], result['refresh_token'])
+        this.$router.replace('/chat')
+      }
+    },
+    saveToken (accessToken, refreshToken) {
+      if (sessionStorage) {
+        sessionStorage.setItem('oChatAT', accessToken)
+        sessionStorage.setItem('oChatRT', refreshToken)
+      }
+    }
+  },
+  components: {
+    'o-button': Button,
+    Avatar
+  }
+}
+</script>
+
+<style lang="less">
+.page {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .register {
+    width: 320px;
+    height: 460px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    box-shadow: 0 1px 1px 0 rgba(60,64,67,.08), 0 1px 3px 1px rgba(60,64,67,.16);
+    &-form {
+      padding: 0 25px;
+      width: 100%;
+      box-sizing: border-box;
+      &-input {
+        width: 100%;
+        border: none;
+        outline: none;
+        box-sizing: border-box;
+        font-size: 16px;
+        height: 26px;
+        line-height: 26px;
+        &.error {
+          animation: shake 0.8s 1;
+        }
+      }
+      &-btn {
+        float: right;
+      }
+    }
+  }
+}
+
+.register-form-input-box {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ccc;
+  overflow: hidden;
+  &.error:after {
+    content: attr(data-error);
+    color: red;
+    position: absolute;
+    right: 0;
+    top: 10px;
+    font-size: 14px;
+  }
+}
+.register-form-btn-box {
+  padding-top: 30px;
+}
+
+@keyframes shake {
+  from,
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    -webkit-transform: translate3d(-10px, 0, 0);
+    transform: translate3d(-10px, 0, 0);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    -webkit-transform: translate3d(10px, 0, 0);
+    transform: translate3d(10px, 0, 0);
+  }
+}
+</style>
