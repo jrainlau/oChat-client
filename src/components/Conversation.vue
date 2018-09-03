@@ -102,6 +102,7 @@ export default {
     },
     changeName (e) {
       this.$emit('changeRoomName', e.target.value)
+      e.target.blur()
     },
     submit (e) {
       const value = e.target.innerText.replace(/[\n\r]$/, '')

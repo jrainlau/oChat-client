@@ -42,13 +42,15 @@ export default {
   },
   data () {
     return {
-      activeRoom: ''
+      activeRoom: '',
+      autoJoin: true
     }
   },
   watch: {
     joinedRooms (newVal) {
-      if (newVal) {
+      if (newVal && this.autoJoin) {
         this.onItemClick(newVal[0].roomId, 0)
+        this.autoJoin = false
       }
     },
     newMsg (newVal) {
