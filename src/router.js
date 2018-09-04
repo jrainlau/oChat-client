@@ -9,7 +9,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'register',
+      name: 'oChat',
       component: () => import('./views/Register.vue')
     },
     {

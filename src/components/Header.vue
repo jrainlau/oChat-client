@@ -74,11 +74,11 @@ export default {
       width: 240px;
       border: none;
       outline: none;
-      height: 40px;
-      line-height: 40px;
+      height: 30px;
+      line-height: 30px;
       box-sizing: border-box;
       padding: 0 10px;
-      font-size: 18px;
+      font-size: 16px;
     }
     &-btn {
       vertical-align: top;
@@ -86,8 +86,8 @@ export default {
       border-left: 1px solid #ccc;
       outline: none;
       background: #fff;
-      height: 40px;
-      line-height: 40px;
+      height: 30px;
+      line-height: 30px;
       padding: 0 15px;
       box-sizing: border-box;
       font-size: 18px;

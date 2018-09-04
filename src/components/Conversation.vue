@@ -1,25 +1,29 @@
 <template>
   <div class="conversation">
+    <div class="empty" v-if="!currentRoom.roomId">
+      <h1>You have not joined any room yet,</h1>
+      <h1>Create or join one, and begin to enjoy oChat!</h1>
+    </div>
     <div class="conversation-header" v-if="currentRoom.roomId">
-      <span class="quite"><i class="fas fa-times-circle"></i></span>
+      <span class="quite" @click="leaveRoom"><i class="fas fa-times-circle"></i></span>
       <div class="conversation-header-info">
         <h2><input type="text" :value="currentRoom.roomName" @keyup.enter="changeName"></h2>
-        <span>No.{{currentRoom.roomId}}</span>
+        <span>ID.{{currentRoom.roomId}}</span>
       </div>
       <div class="online-amount">{{currentRoom.members.length}} people online</div>
     </div>
-    <ul class="conversation-chat">
-      <li class="conversation-chat-msg" :class="{'self': username === Object.keys(msg)[0]}" v-for="(msg, index) in msgList" :key="index">
+    <ul class="conversation-chat" ref="chat" v-if="currentRoom.roomId">
+      <li class="conversation-chat-msg" :class="{'self': username === msg.user}" v-for="(msg, index) in msgList" :key="index">
         <div class="avatar">
           <img :src="avatarMap[username]" alt="">
         </div>
         <div class="info">
-          <span class="info-name">{{Object.keys(msg)[0]}}</span>
-          <p class="info-detail">{{Object.values(msg)[0]}}</p>
+          <span class="info-name">{{msg.user}}</span>
+          <p class="info-detail">{{msg.text}}</p>
         </div>
       </li>
     </ul>
-    <div class="conversation-editor" ref="editor">
+    <div class="conversation-editor" ref="editor" v-if="currentRoom.roomId">
       <div class="tools">
         <div class="control-bar" ref="controlBar"></div>
         <span class="tools-btn"><i class="far fa-grin-alt"></i></span>
@@ -55,6 +59,18 @@ export default {
       onDrag: false
     }
   },
+  watch: {
+    msgList (val) {
+      if (val) {
+        const chatBox = this.$refs.chat
+        this.$nextTick(() => {
+          if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight
+          }
+        })
+      }
+    }
+  },
   computed: {
     avatarMap () {
       return getAvatarMap()
@@ -72,7 +88,7 @@ export default {
       let moveY = 0
       let startHeight = 0
       let endHeight = 0
-      controlBar.addEventListener('mousedown', (e) => {
+      controlBar && controlBar.addEventListener('mousedown', (e) => {
         startY = e.pageY
         startHeight = editor.offsetHeight
         this.onDrag = true
@@ -108,6 +124,9 @@ export default {
       const value = e.target.innerText.replace(/[\n\r]$/, '')
       e.target.innerText = ''
       this.$emit('submit', value)
+    },
+    leaveRoom () {
+      this.$emit('leaveRoom', this.currentRoom.roomId)
     }
   }
 }
@@ -122,7 +141,7 @@ export default {
 .conversation {
   height: 100%;
   width: 100%;
-  background: pink;
+  background: @chatBackground;
   flex: 1 1 auto;
   border-right: 1px solid #ccc;
   display: flex;
@@ -156,6 +175,7 @@ export default {
       font-size: 18px;
       color: #ff5f52;
       width: 33%;
+      cursor: pointer;
     }
     .online-amount {
       width: 33%;
@@ -272,6 +292,14 @@ export default {
         outline: none;
       }
     }
+  }
+  .empty {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>
