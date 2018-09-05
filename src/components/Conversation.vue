@@ -15,7 +15,7 @@
     <ul class="conversation-chat" ref="chat" v-if="currentRoom.roomId">
       <li class="conversation-chat-msg" :class="{'self': username === msg.user}" v-for="(msg, index) in msgList" :key="index">
         <div class="avatar">
-          <img :src="avatarMap[username]" alt="">
+          <img :src="avatarMap[msg.user]" alt="">
         </div>
         <div class="info">
           <span class="info-name">{{msg.user}}</span>

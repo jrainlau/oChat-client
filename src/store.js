@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import { setLastChat, getStorage } from '@/utils'
+import { setLastChat, getStorage, domain, path } from '@/utils'
 
 Vue.use(Vuex)
 
@@ -29,7 +29,7 @@ export default new Vuex.Store({
     async preSubmit ({ commit }, userInfo) {
       const result = await axios({
         method: 'post',
-        url: 'https://jrainlau.com/ochat-server/getUser',
+        url: `${domain}${path}/getUser`,
         data: userInfo
       }).then(({ data }) => {
         return data.message
@@ -44,7 +44,7 @@ export default new Vuex.Store({
     async doRegistration ({ commit }, registerInfo) {
       const result = await axios({
         method: 'post',
-        url: 'https://jrainlau.com/ochat-server/registration',
+        url: `${domain}${path}/registration`,
         data: registerInfo
       }).then(({ data }) => {
         return data.message
@@ -59,7 +59,7 @@ export default new Vuex.Store({
     async doLogin ({ commit }, loginInfo) {
       const result = await axios({
         method: 'post',
-        url: 'https://jrainlau.com/ochat-server/login',
+        url: `${domain}${path}/login`,
         data: loginInfo
       }).then(({ data }) => {
         return data.message
@@ -74,7 +74,7 @@ export default new Vuex.Store({
     async refreshToken ({ commit }) {
       const result = await axios({
         method: 'post',
-        url: 'https://jrainlau.com/ochat-server/token/refresh',
+        url: `${domain}${path}/token/refresh`,
         headers: {
           'Authorization': `Bearer ${getStorage('oChatRT')}`
         }

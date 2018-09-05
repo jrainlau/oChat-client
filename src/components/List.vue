@@ -89,10 +89,11 @@ export default {
       return this.$store.state.notifyRoom
     }
   },
-  updated () {
-    if (this.autoJoin && this.joinedRooms[0]) {
-      this.onItemClick(this.joinedRooms[0].roomId, 0)
-      this.autoJoin = false
+  watch: {
+    joinedRooms (val) {
+      if (val[0]) {
+        this.onItemClick(val[0].roomId, 0)
+      }
     }
   },
   methods: {

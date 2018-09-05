@@ -5,7 +5,7 @@
         oChat
       </h1>
       <div class="header-search">
-        <input type="text" class="header-search-input" v-model="roomId" @keyup.enter="onSearch">
+        <input onkeyup="value=value.replace(/[^\d]/g,'')" type="tel" maxlength="6" placeholder="Type the room ID here" class="header-search-input" v-model="roomId" @keyup.enter="onSearch">
         <button class="header-search-btn" @click="onSearch">Enter</button>
       </div>
     </div>
@@ -38,6 +38,7 @@ export default {
   methods: {
     onSearch (e) {
       this.$emit('onSearch', this.roomId)
+      this.roomId = ''
     }
   }
 }
@@ -118,7 +119,7 @@ export default {
       }
     }
     &-name {
-      font-size: 22px;
+      font-size: 18px;
     }
   }
 }

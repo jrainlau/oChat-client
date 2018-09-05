@@ -33,7 +33,7 @@ export function setLastChat (joinedRooms) {
     if (!room.lastChat) {
       room.lastChat = {
         user: 'You',
-        text: 'Created a new room',
+        text: 'Entered a new room',
         time: ''
       }
     }
@@ -81,3 +81,11 @@ export function showNotice (msg) {
     }
   })
 }
+
+export const domain = 'https://jrainlau.com'
+
+export const path = '/ochat-server'
+
+// export const domain = 'http://localhost:3000'
+
+// export const path = ''

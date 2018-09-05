@@ -26,7 +26,7 @@ import io from 'socket.io-client'
 import Header from '@/components/Header'
 import List from '@/components/List'
 import Conversation from '@/components/Conversation'
-import { setAvatarsMap, getStorage, setStorage, getRoomIndex, getJoinedRoomsId, showNotice } from '@/utils'
+import { setAvatarsMap, getStorage, setStorage, getRoomIndex, getJoinedRoomsId, showNotice, domain, path } from '@/utils'
 
 let socket = {}
 
@@ -61,8 +61,8 @@ export default {
   methods: {
     onConnect () {
       let token = sessionStorage && sessionStorage.getItem('oChatAT')
-      socket = io('https://jrainlau.com/', {
-        path: '/ochat-server/socket.io',
+      socket = io(domain, {
+        path: `${path}/socket.io`,
         query: { token }
       })
       socket.on('Connect successed', (data) => {
@@ -84,7 +84,6 @@ export default {
         console.log(data)
         socket.disconnect()
         const result = await this.$store.dispatch('refreshToken')
-        console.log(result)
         if (result.status === 200 && result.data.message['access_token']) {
           token = result.data.message['access_token']
           setStorage('oChatAT', token)
@@ -108,6 +107,8 @@ export default {
           if (message.user === this.username) {
             const joinedRooms = message.joinedRooms.reverse()
             this.$store.dispatch('updateJoinedRooms', joinedRooms)
+          } else {
+            this.currentRoom['members'].push(message.user)
           }
           setAvatarsMap(message.user, message.avatar)
         }
@@ -122,12 +123,21 @@ export default {
         }
 
         if (message.status === 'left') {
-          const joinedRooms = message.joinedRooms.reverse()
-          this.$store.dispatch('updateJoinedRooms', joinedRooms)
-          this.$refs.oList.onItemClick(this.joinedRooms[0].roomId, 0)
-          const localChatHistory = getStorage('oChatHistory')
-          delete localChatHistory[message.roomId]
-          setStorage('oChatHistory', localChatHistory)
+          if (message.user === this.username) {
+            const joinedRooms = message.joinedRooms.reverse()
+            this.$store.dispatch('updateJoinedRooms', joinedRooms)
+            if (this.joinedRooms[0]) {
+              this.$refs.oList.onItemClick(this.joinedRooms[0].roomId, 0)
+            } else {
+              this.currentRoom = {}
+            }
+            const localChatHistory = getStorage('oChatHistory')
+            delete localChatHistory[message.roomId]
+            setStorage('oChatHistory', localChatHistory)
+          } else {
+            const index = this.currentRoom['members'].findIndex(name => name === message.username)
+            index && this.currentRoom['members'].splice(index, 1)
+          }
         }
       })
     },
@@ -179,9 +189,6 @@ export default {
     },
     selectRoom (id, index) {
       this.currentRoom = this.joinedRooms[index]
-      socket.emit('join', {
-        roomId: id
-      })
 
       const localChatHistory = getStorage('oChatHistory')
 
@@ -207,7 +214,6 @@ export default {
       socket.emit('join', {
         roomId: id
       })
-      this.$refs.oList.onItemClick(this.joinedRooms[0].roomId, 0)
     },
     leaveRoom (id) {
       socket.emit('leave', {
