@@ -29,7 +29,7 @@ export default new Vuex.Store({
     async preSubmit ({ commit }, userInfo) {
       const result = await axios({
         method: 'post',
-        url: 'http://localhost:5000/getUser',
+        url: 'https://jrainlau.com/ochat-server/getUser',
         data: userInfo
       }).then(({ data }) => {
         return data.message
@@ -44,7 +44,7 @@ export default new Vuex.Store({
     async doRegistration ({ commit }, registerInfo) {
       const result = await axios({
         method: 'post',
-        url: 'http://localhost:5000/registration',
+        url: 'https://jrainlau.com/ochat-server/registration',
         data: registerInfo
       }).then(({ data }) => {
         return data.message
@@ -59,7 +59,7 @@ export default new Vuex.Store({
     async doLogin ({ commit }, loginInfo) {
       const result = await axios({
         method: 'post',
-        url: 'http://localhost:5000/login',
+        url: 'https://jrainlau.com/ochat-server/login',
         data: loginInfo
       }).then(({ data }) => {
         return data.message
@@ -74,7 +74,7 @@ export default new Vuex.Store({
     async refreshToken ({ commit }) {
       const result = await axios({
         method: 'post',
-        url: 'http://localhost:5000/token/refresh',
+        url: 'https://jrainlau.com/ochat-server/token/refresh',
         headers: {
           'Authorization': `Bearer ${getStorage('oChatRT')}`
         }

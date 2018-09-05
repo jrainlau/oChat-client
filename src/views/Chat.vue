@@ -61,7 +61,7 @@ export default {
   methods: {
     onConnect () {
       let token = sessionStorage && sessionStorage.getItem('oChatAT')
-      socket = io.connect('http://127.0.0.1:5000/chat', {
+      socket = io.connect('https://jrainlau.com/ochat-server/chat', {
         query: { token }
       })
       socket.on('Connect successed', (data) => {
