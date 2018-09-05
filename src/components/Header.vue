@@ -65,7 +65,8 @@ export default {
     align-items: center;
   }
   &-logo {
-    margin-right: 40px;
+    margin-right: 15px;
+    height: 40px;
     img {
       height: 100%;
     }
