@@ -12,15 +12,15 @@ self.__precacheManifest = [
     "url": "/ochat-client/js/chunk-3bdf.af0aa303.js"
   },
   {
-    "revision": "79e5e142aec0767b175d",
-    "url": "/ochat-client/js/chunk-1501.e8d68b26.js"
+    "revision": "59cd30cb466f402ae3c2",
+    "url": "/ochat-client/js/chunk-1501.fa75de53.js"
   },
   {
-    "revision": "fddd7bde5035c8ac6777",
-    "url": "/ochat-client/js/app.bb1aa100.js"
+    "revision": "cb4b7563d8cf6f330909",
+    "url": "/ochat-client/js/app.0a65f509.js"
   },
   {
-    "revision": "b3bca853b733322cbeb45c0583ed19e7",
+    "revision": "f93786eac39884d74169f1579a89d178",
     "url": "/ochat-client/index.html"
   },
   {
@@ -32,11 +32,11 @@ self.__precacheManifest = [
     "url": "/ochat-client/css/chunk-3bdf.6d5181ee.css"
   },
   {
-    "revision": "79e5e142aec0767b175d",
+    "revision": "59cd30cb466f402ae3c2",
     "url": "/ochat-client/css/chunk-1501.21449b7e.css"
   },
   {
-    "revision": "fddd7bde5035c8ac6777",
+    "revision": "cb4b7563d8cf6f330909",
     "url": "/ochat-client/css/app.92f696e8.css"
   }
 ];
