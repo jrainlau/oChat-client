@@ -107,7 +107,7 @@ export default {
           if (message.user === this.username) {
             const joinedRooms = message.joinedRooms.reverse()
             this.$store.dispatch('updateJoinedRooms', joinedRooms)
-          } else {
+          } else if (!this.currentRoom['members'].includes(message.user)) {
             this.currentRoom['members'].push(message.user)
           }
           setAvatarsMap(message.user, message.avatar)
