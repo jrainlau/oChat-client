@@ -36,8 +36,6 @@ function chooseImg (e, cb, maxsize = 200 * 1024) {
     const result = this.result
     let img = new Image()
 
-    console.log(result.length, maxsize)
-
     // 如果图片小于 200kb，不压缩
     if (result.length <= maxsize) {
       toPreviewer(result, cb)
@@ -46,7 +44,6 @@ function chooseImg (e, cb, maxsize = 200 * 1024) {
 
     img.onload = function () {
       const compressedDataUrl = compress(img, file.type, maxsize / 1024)
-      console.log(compressedDataUrl.length, maxsize)
       toPreviewer(compressedDataUrl, cb)
       img = null
     }
