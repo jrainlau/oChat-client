@@ -1,5 +1,6 @@
 module.exports = {
   lintOnSave: false,
+  baseUrl: 'ochat-client',
   pwa: {
     name: 'My App',
     themeColor: '#4DBA87',

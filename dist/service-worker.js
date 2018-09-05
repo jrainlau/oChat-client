@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.4.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.d319506989ddb87353ab85bc07fd82d9.js"
+  "/ochat-client/precache-manifest.f24d57ded1b05d39d056b029cdf07c4a.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "ochat"});
