@@ -1,9 +1,9 @@
 <template>
   <header class="header">
     <div class="header-info">
-      <h1 class="header-logo">
-        oChat
-      </h1>
+      <div class="header-logo">
+        <img :src="require('@/assets/img/logo.png')" alt="">
+      </div>
       <div class="header-search">
         <input onkeyup="value=value.replace(/[^\d]/g,'')" type="tel" maxlength="6" placeholder="Type the room ID here" class="header-search-input" v-model="roomId" @keyup.enter="onSearch">
         <button class="header-search-btn" @click="onSearch">Enter</button>
@@ -65,7 +65,10 @@ export default {
     align-items: center;
   }
   &-logo {
-    margin-right: 30px;
+    margin-right: 40px;
+    img {
+      height: 100%;
+    }
   }
   &-search {
     border: 1px solid #ccc;

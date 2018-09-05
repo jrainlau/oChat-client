@@ -7,10 +7,10 @@
           <input autocomplete="new-password" maxlength="12" class="register-form-input" type="text" placeholder="Name" v-model="username" @blur="presubmit">
         </div>
         <div class="register-form-input-box" :class="{'error': password && !validPassword}" data-error="Invalid password!">
-          <input autocomplete="new-password" maxlength="12" class="register-form-input" :class="{'error': errorPassword}" type="password" placeholder="Password" v-model="password">
+          <input autocomplete="new-password" maxlength="12" class="register-form-input" :class="{'error': errorPassword}" type="password" @keyup.enter="login" placeholder="Password" v-model="password">
         </div>
         <div class="register-form-input-box" v-if="!userExist" :class="{'error': inviteCode && !validInviteCode}" data-error="Invalid invite code!">
-          <input autocomplete="new-password" maxlength="4" class="register-form-input" :class="{'error': errorInviteCode}" type="text" placeholder="Invite code" v-model="inviteCode">
+          <input autocomplete="new-password" maxlength="4" class="register-form-input" :class="{'error': errorInviteCode}" type="text"  @keyup.enter="register" placeholder="Invite code" v-model="inviteCode">
         </div>
         <div class="register-form-btn-box">
           <o-button class="register-form-btn" v-if="userExist" :disabled="!allowLogin" type="success" @click="login">Login</o-button>

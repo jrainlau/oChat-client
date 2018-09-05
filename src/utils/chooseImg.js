@@ -1,14 +1,14 @@
-// 200 KB 对应的字节数
 function toPreviewer (dataUrl, cb) {
   cb && cb(dataUrl)
 }
 
-function compress (img, fileType) {
+function compress (img, fileType, maxWidth) {
   let canvas = document.createElement('canvas')
   let ctx = canvas.getContext('2d')
 
-  const width = img.width
-  const height = img.height
+  const proportion = img.width / img.height
+  const width = maxWidth
+  const height = maxWidth / proportion
 
   canvas.width = width
   canvas.height = height
@@ -26,7 +26,7 @@ function compress (img, fileType) {
 
 function chooseImg (e, cb, maxsize = 200 * 1024) {
   const file = e.target.files[0]
-  // 接受 jpeg, jpg, png 类型的图片
+
   if (!/\/(?:jpeg|jpg|png)/i.test(file.type)) {
     return
   }
@@ -36,6 +36,8 @@ function chooseImg (e, cb, maxsize = 200 * 1024) {
     const result = this.result
     let img = new Image()
 
+    console.log(result.length, maxsize)
+
     // 如果图片小于 200kb，不压缩
     if (result.length <= maxsize) {
       toPreviewer(result, cb)
@@ -43,7 +45,8 @@ function chooseImg (e, cb, maxsize = 200 * 1024) {
     }
 
     img.onload = function () {
-      const compressedDataUrl = compress(img, file.type)
+      const compressedDataUrl = compress(img, file.type, maxsize / 1024)
+      console.log(compressedDataUrl.length, maxsize)
       toPreviewer(compressedDataUrl, cb)
       img = null
     }
