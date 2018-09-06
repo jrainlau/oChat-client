@@ -19,7 +19,7 @@
         </div>
         <div class="info">
           <span class="info-name">{{msg.user}}</span>
-          <p class="info-detail">{{msg.text}}</p>
+          <div class="info-detail" v-html="msg.text"></div>
         </div>
       </li>
     </ul>
@@ -29,7 +29,7 @@
         <span class="tools-btn"><i class="far fa-grin-alt"></i></span>
       </div>
       <div class="editor-box">
-        <div class="editor" contenteditable="true" @keydown.enter.prevent="submit"></div>
+        <editor ref="editor" @submit="submit"></editor>
       </div>
     </div>
   </div>
@@ -38,6 +38,7 @@
 <script>
 /* eslint-disable no-console */
 import { getAvatarMap } from '@/utils'
+import Editor from '@/components/Editor'
 
 export default {
   props: {
@@ -70,6 +71,9 @@ export default {
         })
       }
     }
+  },
+  components: {
+    Editor
   },
   computed: {
     avatarMap () {
@@ -120,9 +124,7 @@ export default {
       this.$emit('changeRoomName', e.target.value)
       e.target.blur()
     },
-    submit (e) {
-      const value = e.target.innerText.replace(/[\n\r]$/, '')
-      e.target.innerText = ''
+    submit (value) {
       this.$emit('submit', value)
     },
     leaveRoom () {
@@ -207,6 +209,11 @@ export default {
         .info .info-detail {
           margin: 0;
           background: @activeBackground;
+          padding: 15px;
+          border-radius: 4px;
+          word-break: break-all;
+          overflow-wrap: break-word;
+          max-width: 100%;
         }
       }
       .avatar {
@@ -290,6 +297,7 @@ export default {
         overflow-wrap: break-word;
         padding: 5px;
         outline: none;
+        -webkit-user-modify: read-write-plaintext-only
       }
     }
   }

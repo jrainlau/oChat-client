@@ -27,6 +27,10 @@ function compress (img, fileType, maxWidth) {
 function chooseImg (e, cb, maxsize = 200 * 1024) {
   const file = e.target.files[0]
 
+  if (!file) {
+    return
+  }
+
   if (!/\/(?:jpeg|jpg|png)/i.test(file.type)) {
     return
   }
