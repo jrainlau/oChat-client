@@ -110,7 +110,9 @@ export default {
           } else if (!this.currentRoom['members'].includes(message.user)) {
             this.currentRoom['members'].push(message.user)
           }
-          setAvatarsMap(message.user, message.avatar)
+          message.avatarList.forEach(({ user, avatar }) => {
+            setAvatarsMap(user, avatar)
+          })
         }
 
         if (message.status === 'rename') {
