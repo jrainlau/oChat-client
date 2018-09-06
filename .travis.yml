@@ -1,6 +1,7 @@
 language: node_js
 node_js:
 - 9.3.0
+install: true
 after_success:
 - ssh root@104.153.97.131 -p 28733 'cd /home/www/oChat-client && git pull && npm i && npm run build'
 before_install:
