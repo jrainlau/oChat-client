@@ -48,11 +48,13 @@ export default {
     },
     getCursor () {
       this.cursorPosition = getCursorPosition(editor)
+      console.log(this.cursorPosition)
     },
     insertEmoji (emoji) {
       const text = editor.innerHTML
       editor.innerHTML = text.slice(0, this.cursorPosition) + emoji + text.slice(this.cursorPosition, text.length)
       setCursorPosition(editor, this.cursorPosition + 1)
+      this.cursorPosition = getCursorPosition(editor) + 1 //  emoji takes 2 bytes
     }
   }
 }
