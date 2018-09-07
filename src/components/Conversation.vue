@@ -7,7 +7,7 @@
     <div class="conversation-header" v-if="currentRoom.roomId">
       <span class="quite" @click="leaveRoom"><i class="fas fa-times-circle"></i></span>
       <div class="conversation-header-info">
-        <h2><input type="text" :value="currentRoom.roomName" @keyup.enter="changeName"></h2>
+        <h2><input type="text" :value="currentRoom.roomName" @blur="changeName" @keyup.enter="changeName"></h2>
         <span>ID.{{currentRoom.roomId}}</span>
       </div>
       <div class="online-amount">{{currentRoom.members.length}} people online</div>

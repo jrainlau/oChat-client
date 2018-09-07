@@ -48,7 +48,6 @@ export default {
     },
     getCursor () {
       this.cursorPosition = getCursorPosition(editor)
-      console.log(this.cursorPosition)
     },
     insertEmoji (emoji) {
       const text = editor.innerHTML
