@@ -1,11 +1,22 @@
 <template>
-  <div class="editor" contenteditable="true" @keydown.enter.prevent="submit" @paste.prevent="onPaste"></div>
+  <div class="editor" contenteditable="true" @keyup="getCursor" @click="getCursor" @keydown.enter.prevent="submit" @paste.prevent="onPaste"></div>
 </template>
 
 <script>
 import paste from '@/utils/paste'
+import { getCursorPosition, setCursorPosition } from '@/utils/cursorPosition'
+
+let editor = null
 
 export default {
+  data () {
+    return {
+      cursorPosition: 0
+    }
+  },
+  mounted () {
+    editor = document.querySelector('.editor')
+  },
   methods: {
     submit (e) {
       const value = e.target.innerHTML.replace(/[\n\r]$/, '')
@@ -31,6 +42,17 @@ export default {
       } else {
         document.execCommand('insertText', false, result)
       }
+    },
+    toggleFocus (val) {
+      this.$emit('toggleFocus', val)
+    },
+    getCursor () {
+      this.cursorPosition = getCursorPosition(editor)
+    },
+    insertEmoji (emoji) {
+      const text = editor.innerHTML
+      editor.innerHTML = text.slice(0, this.cursorPosition) + emoji + text.slice(this.cursorPosition, text.length)
+      setCursorPosition(editor, this.cursorPosition + 1)
     }
   }
 }

@@ -24,9 +24,10 @@
       </li>
     </ul>
     <div class="conversation-editor" ref="editor" v-if="currentRoom.roomId">
+      <emoji ref="editor" v-show="showEmoji" @selectEmoji="insertEmoji"></emoji>
       <div class="tools">
         <div class="control-bar" ref="controlBar"></div>
-        <span class="tools-btn"><i class="far fa-grin-alt"></i></span>
+        <span class="tools-btn" @click="toggleEmoji"><i class="far fa-grin-alt"></i></span>
       </div>
       <div class="editor-box">
         <editor ref="editor" @submit="submit"></editor>
@@ -39,6 +40,7 @@
 /* eslint-disable no-console */
 import { getAvatarMap } from '@/utils'
 import Editor from '@/components/Editor'
+import Emoji from '@/components/Emoji'
 
 export default {
   props: {
@@ -57,7 +59,7 @@ export default {
   },
   data () {
     return {
-      onDrag: false
+      showEmoji: false
     }
   },
   watch: {
@@ -73,53 +75,15 @@ export default {
     }
   },
   components: {
-    Editor
+    Editor,
+    Emoji
   },
   computed: {
     avatarMap () {
       return getAvatarMap()
     }
   },
-  mounted () {
-    this.resize()
-  },
   methods: {
-    resize (e) {
-      const controlBar = this.$refs.controlBar
-      const editor = this.$refs.editor
-      let startY = 0
-      let endY = 0
-      let moveY = 0
-      let startHeight = 0
-      let endHeight = 0
-      controlBar && controlBar.addEventListener('mousedown', (e) => {
-        startY = e.pageY
-        startHeight = editor.offsetHeight
-        this.onDrag = true
-      })
-      document.addEventListener('mouseup', () => {
-        this.onDrag = false
-      })
-      document.addEventListener('click', () => {
-        this.onDrag = false
-      })
-      document.addEventListener('mousemove', (e) => {
-        if (this.onDrag) {
-          endY = e.pageY
-          moveY = startY - endY
-          endHeight = startHeight + moveY
-          if (endHeight >= 120 && endHeight <= 300) {
-            editor.style.height = endHeight + 'px'
-          } else if (endHeight < 120) {
-            editor.style.height = '120px'
-            this.onDrag = false
-          } else if (endHeight > 300) {
-            editor.style.height = '300px'
-            this.onDrag = false
-          }
-        }
-      })
-    },
     changeName (e) {
       this.$emit('changeRoomName', e.target.value)
       e.target.blur()
@@ -129,6 +93,13 @@ export default {
     },
     leaveRoom () {
       this.$emit('leaveRoom', this.currentRoom.roomId)
+    },
+    toggleEmoji () {
+      this.showEmoji = !this.showEmoji
+    },
+    insertEmoji (emoji) {
+      this.$refs.editor.insertEmoji(emoji)
+      this.toggleEmoji()
     }
   }
 }
@@ -249,7 +220,7 @@ export default {
   }
   &-editor {
     position: relative;
-    height: 120px;
+    height: 160px;
     background: @headerBackground;
     flex: 0 0 auto;
     border-top: 1px solid #ccc;
