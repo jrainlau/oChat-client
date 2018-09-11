@@ -4,17 +4,17 @@
       <Avatar :src="avatar" @click="filePickerOnClick"></Avatar>
       <div class="register-form">
         <div class="register-form-input-box" :class="{'error': username && !validUsername}" data-error="Invalid username!">
-          <input autocomplete="new-password" maxlength="12" class="register-form-input" type="text" placeholder="Name" v-model="username" @blur="presubmit">
+          <input autocomplete="new-password" maxlength="12" class="register-form-input" :class="{'error': userExist}" type="text" placeholder="New name" v-model="username" @blur="presubmit">
         </div>
-        <div class="register-form-input-box" :class="{'error': password && !validPassword}" data-error="Invalid password!">
-          <input autocomplete="new-password" maxlength="12" class="register-form-input" :class="{'error': errorPassword}" type="password" @keyup.enter="login" placeholder="Password" v-model="password">
+        <div class="register-form-input-box" :class="{'error': password && !validOldPwd}" data-error="Invalid password!">
+          <input autocomplete="new-password" maxlength="12" class="register-form-input" :class="{'error': errorPassword}" type="password" placeholder="Old password" v-model="password">
         </div>
-        <div class="register-form-input-box" v-if="!userExist" :class="{'error': inviteCode && !validInviteCode}" data-error="Invalid invite code!">
-          <input autocomplete="new-password" maxlength="4" class="register-form-input" :class="{'error': errorInviteCode}" type="text"  @keyup.enter="register" placeholder="Invite code" v-model="inviteCode">
+        <div class="register-form-input-box" :class="{'error': newPassword && !validNewPwd}" data-error="Invalid password!">
+          <input autocomplete="new-password" maxlength="12" class="register-form-input" type="password" @keyup.enter="updateProfile" placeholder="New password" v-model="newPassword">
         </div>
         <div class="register-form-btn-box">
-          <o-button class="register-form-btn" v-if="userExist" :disabled="!allowLogin" type="success" @click="login">Login</o-button>
-          <o-button class="register-form-btn" v-if="!userExist" :disabled="!allowRegister" type="success" @click="register">Register</o-button>
+          <o-button class="register-form-btn" :disabled="!allowUpdate" type="success" @click="updateProfile">Update</o-button>
+          <o-button class="register-form-btn logout" type="danger" @click="logout">Logout</o-button>
         </div>
       </div>
       <input type="file" ref="filePicker" accept="image/*" id="file-picker" hidden  @change="doChooseImg">
@@ -26,8 +26,8 @@
 /* eslint-disable no-console */
 
 import chooseImg from '@/utils/chooseImg'
-import { isUsername, isPassword, isInviteCode } from '@/utils/validator'
-import { setStorage } from '@/utils'
+import { isUsername, isPassword } from '@/utils/validator'
+import { getStorage } from '@/utils'
 import Button from '@/components/Button'
 import Avatar from '@/components/Avatar'
 
@@ -36,28 +36,32 @@ export default {
     return {
       username: '',
       password: '',
-      inviteCode: '',
+      newPassword: '',
       userExist: false,
       errorPassword: false,
-      errorInviteCode: false,
-      avatar: null
+      avatar: typeof getStorage('oChatAvatar') === 'string' ? getStorage('oChatAvatar') : ''
     }
   },
   computed: {
     validUsername () {
       return isUsername(this.username)
     },
-    validPassword () {
+    validOldPwd () {
       return isPassword(this.password)
     },
-    validInviteCode () {
-      return isInviteCode(this.inviteCode)
+    validNewPwd () {
+      return isPassword(this.newPassword)
     },
-    allowRegister () {
-      return this.validUsername && this.validPassword && this.validInviteCode
-    },
-    allowLogin () {
-      return this.validUsername && this.validPassword
+    allowUpdate () {
+      return this.validUsername && this.validOldPwd && this.validNewPwd && !this.userExist
+    }
+  },
+  async mounted () {
+    const userInfo = await this.$store.dispatch('getUserInfo', {
+      username: getStorage('oChatUsername')
+    })
+    if (!userInfo.username) {
+      this.$router.replace('/')
     }
   },
   methods: {
@@ -70,58 +74,48 @@ export default {
       })
     },
     async presubmit () {
+      if (this.username === getStorage('oChatUsername')) {
+        return false
+      }
+
       const result = await this.$store.dispatch('preSubmit', {
         username: this.username
       })
       if (result.username) {
         this.userExist = true
-        this.avatar = result.avatar
+        setTimeout(() => {
+          this.userExist = false
+          this.username = ''
+        }, 1000)
       } else {
         this.userExist = false
       }
     },
-    async login () {
-      const loginInfo = {
-        username: this.username,
-        password: this.password
+    async updateProfile () {
+      const userInfo = {
+        username: getStorage('oChatUsername'),
+        newName: this.username,
+        password: this.password,
+        newPassword: this.newPassword,
+        newAvatar: this.avatar
       }
-      const result = await this.$store.dispatch('doLogin', loginInfo)
-      if (!result.username) {
+      const result = await this.$store.dispatch('editProfile', userInfo)
+      if (result.status !== 500) {
+        this.logout()
+      } else {
         this.errorPassword = true
         setTimeout(() => {
           this.errorPassword = false
+          this.password = ''
         }, 1000)
-      } else {
-        setStorage('oChatAvatar', result.avatar)
-        setStorage('oChatUsername', this.username)
-        this.saveToken(result['access_token'], result['refresh_token'])
-        this.$router.replace('/chat')
       }
     },
-    async register () {
-      const registerInfo = {
-        username: this.username,
-        password: this.password,
-        inviteCode: this.inviteCode,
-        avatar: this.avatar
-      }
-      const result = await this.$store.dispatch('doRegistration', registerInfo)
-      if (result.message === 'Invite code error!') {
-        this.errorInviteCode = true
-        setTimeout(() => {
-          this.errorInviteCode = false
-        }, 1000)
+    async logout () {
+      const { clearAccessToken, clearRefreshToken } = await this.$store.dispatch('doLogout')
+      if (typeof clearAccessToken === 'string' && typeof clearRefreshToken === 'string') {
+        this.$router.replace('/')
       } else {
-        setStorage('oChatAvatar', result.avatar)
-        setStorage('oChatUsername', this.username)
-        this.saveToken(result['access_token'], result['refresh_token'])
-        this.$router.replace('/chat')
-      }
-    },
-    saveToken (accessToken, refreshToken) {
-      if (sessionStorage) {
-        sessionStorage.setItem('oChatAT', accessToken)
-        sessionStorage.setItem('oChatRT', refreshToken)
+        console.log({ clearAccessToken, clearRefreshToken })
       }
     }
   },
@@ -167,6 +161,9 @@ export default {
       }
       &-btn {
         float: right;
+        &.logout {
+          float: left;
+        }
       }
     }
   }

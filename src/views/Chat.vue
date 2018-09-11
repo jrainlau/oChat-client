@@ -3,6 +3,7 @@
     <o-header
       :avatar="avatar"
       :username="username"
+      @onAvatarClick="onAvatarClick"
       @onSearch="onSearch"></o-header>
     <section class="main">
       <o-conversation
@@ -176,7 +177,7 @@ export default {
     getUserInfo () {
       const avatar = getStorage('oChatAvatar')
       const username = getStorage('oChatUsername')
-      this.avatar = avatar
+      this.avatar = typeof avatar === 'string' ? avatar : ''
       this.username = username
       return {
         avatar,
@@ -221,12 +222,15 @@ export default {
       socket.emit('leave', {
         roomId: id
       })
+    },
+    onAvatarClick () {
+      this.$router.push('/profile')
     }
   }
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .page {
   height: 100%;
   .main {

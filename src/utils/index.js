@@ -82,10 +82,10 @@ export function showNotice (msg) {
   })
 }
 
-export const domain = 'https://jrainlau.com'
+// export const domain = 'https://jrainlau.com'
 
-export const path = '/ochat-server'
+// export const path = '/ochat-server'
 
-// export const domain = 'http://localhost:3000'
+export const domain = 'http://localhost:3000'
 
-// export const path = ''
+export const path = ''

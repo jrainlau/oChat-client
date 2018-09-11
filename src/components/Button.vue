@@ -43,4 +43,12 @@ export default {
     background: #008e76;
   }
 }
+
+.danger {
+  background: #ff5f52;
+  color: #fff;
+  &:active {
+    background: #f74231;
+  }
+}
 </style>

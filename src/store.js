@@ -41,6 +41,42 @@ export default new Vuex.Store({
       })
       return result
     },
+    async getUserInfo ({ commit }, userInfo) {
+      const result = await axios({
+        method: 'post',
+        url: `${domain}${path}/getUserInfo`,
+        headers: {
+          'Authorization': `Bearer ${getStorage('oChatAT')}`
+        },
+        data: userInfo
+      }).then(({ data }) => {
+        return data.message
+      }).catch(({ response }) => {
+        return {
+          status: response.status,
+          message: response.data.message
+        }
+      })
+      return result
+    },
+    async editProfile ({ commit }, userInfo) {
+      const result = await axios({
+        method: 'post',
+        url: `${domain}${path}/editProfile`,
+        headers: {
+          'Authorization': `Bearer ${getStorage('oChatAT')}`
+        },
+        data: userInfo
+      }).then(({ data }) => {
+        return data.message
+      }).catch(({ response }) => {
+        return {
+          status: response.status,
+          message: response.data.message
+        }
+      })
+      return result
+    },
     async doRegistration ({ commit }, registerInfo) {
       const result = await axios({
         method: 'post',
@@ -87,6 +123,40 @@ export default new Vuex.Store({
         }
       })
       return result
+    },
+    async doLogout ({ commit }) {
+      const clearAccessToken = await axios({
+        method: 'post',
+        url: `${domain}${path}/logout/access`,
+        headers: {
+          'Authorization': `Bearer ${getStorage('oChatAT')}`
+        }
+      }).then(({ data }) => {
+        return data.message
+      }).catch(({ response }) => {
+        return {
+          status: response.status,
+          message: response.data.message
+        }
+      })
+      const clearRefreshToken = await axios({
+        method: 'post',
+        url: `${domain}${path}/logout/refresh`,
+        headers: {
+          'Authorization': `Bearer ${getStorage('oChatRT')}`
+        }
+      }).then(({ data }) => {
+        return data.message
+      }).catch(({ response }) => {
+        return {
+          status: response.status,
+          message: response.data.message
+        }
+      })
+      return {
+        clearAccessToken,
+        clearRefreshToken
+      }
     },
     updateJoinedRooms ({ commit }, obj) {
       commit('UPDATE_JOINED_ROOMS', obj)

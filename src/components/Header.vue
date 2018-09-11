@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="header-user">
-      <div class="header-user-avatar">
+      <div class="header-user-avatar" :class="{'empty': !avatar}" @click="onAvatarClick">
         <img :src="avatar" alt="">
       </div>
       <span class="header-user-name">{{username}}</span>
@@ -39,12 +39,15 @@ export default {
     onSearch (e) {
       this.$emit('onSearch', this.roomId)
       this.roomId = ''
+    },
+    onAvatarClick () {
+      this.$emit('onAvatarClick')
     }
   }
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .header {
   width: 100%;
   padding: 0 30px;
@@ -108,6 +111,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     &-avatar {
+      position: relative;
       display: inline-block;
       width: 40px;
       height: 40px;
@@ -116,6 +120,32 @@ export default {
       overflow: hidden;
       border-radius: 40px;
       margin-right: 15px;
+      cursor: pointer;
+      background: #aaa;
+      &.empty {
+        &:before {
+          content: '';
+          display: block;
+          width: 15px;
+          height: 15px;
+          background: #fff;
+          position: absolute;
+          top: 5px;
+          left: 12.5px;
+          border-radius: 100%;
+        }
+        &:after {
+          content: '';
+          display: block;
+          width: 25px;
+          height: 15px;
+          background: #fff;
+          position: absolute;
+          top: 20px;
+          left: 7.5px;
+          border-radius: 100%;
+        }
+      }
       img {
         max-width: 100%;
         max-height: 100%;

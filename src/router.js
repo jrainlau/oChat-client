@@ -17,6 +17,11 @@ export default new Router({
       component: () => import('./views/Register.vue')
     },
     {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('./views/Profile.vue')
+    },
+    {
       path: '/chat',
       name: 'chat',
       component: () => import('./views/Chat.vue')

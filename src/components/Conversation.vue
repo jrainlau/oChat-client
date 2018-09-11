@@ -14,7 +14,7 @@
     </div>
     <ul class="conversation-chat" ref="chat" v-if="currentRoom.roomId">
       <li class="conversation-chat-msg" :class="{'self': username === msg.user}" v-for="(msg, index) in msgList" :key="index">
-        <div class="avatar">
+        <div class="avatar" :class="{'is-empty': !avatarMap[msg.user]}">
           <img :src="avatarMap[msg.user]" alt="">
         </div>
         <div class="info">
@@ -171,8 +171,34 @@ export default {
       &.self {
         flex-direction: row-reverse;
         .avatar {
+          position: relative;
           margin-right: 0;
           margin-left: 15px;
+          background: #aaa;
+          &.is-empty {
+            &:before {
+              content: '';
+              display: block;
+              width: 15px;
+              height: 15px;
+              background: #fff;
+              position: absolute;
+              top: 5px;
+              left: 12.5px;
+              border-radius: 100%;
+            }
+            &:after {
+              content: '';
+              display: block;
+              width: 25px;
+              height: 15px;
+              background: #fff;
+              position: absolute;
+              top: 20px;
+              left: 7.5px;
+              border-radius: 100%;
+            }
+          }
         }
         .info .info-name {
           display: none;
