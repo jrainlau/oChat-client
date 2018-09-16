@@ -17,7 +17,6 @@ function compress (img, fileType, maxWidth) {
   ctx.fillRect(0, 0, canvas.width, canvas.height)
   ctx.drawImage(img, 0, 0, width, height)
 
-  // 压缩
   const base64data = canvas.toDataURL(fileType, 0.75)
   canvas = ctx = null
 
@@ -27,11 +26,7 @@ function compress (img, fileType, maxWidth) {
 function chooseImg (e, cb, maxsize = 200 * 1024) {
   const file = e.target.files[0]
 
-  if (!file) {
-    return
-  }
-
-  if (!/\/(?:jpeg|jpg|png)/i.test(file.type)) {
+  if (!file || !/\/(?:jpeg|jpg|png)/i.test(file.type)) {
     return
   }
 
@@ -40,7 +35,6 @@ function chooseImg (e, cb, maxsize = 200 * 1024) {
     const result = this.result
     let img = new Image()
 
-    // 如果图片小于 200kb，不压缩
     if (result.length <= maxsize) {
       toPreviewer(result, cb)
       return
